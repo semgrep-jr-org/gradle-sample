@@ -2,3 +2,17 @@ plugins {
     id 'base'
     id 'org.gradle.hello-world' version '0.2'
 }
+
+task checkArtifactoryCredentials {
+    description = 'Verifies that ARTIFACTORY_USER and ARTIFACTORY_PASS environment variables are set.'
+    group = 'verification'
+
+    doFirst {
+        def missing = ['ARTIFACTORY_USER', 'ARTIFACTORY_PASS'].findAll { !System.getenv(it) }
+        if (missing) {
+            throw new GradleException("Missing required environment variable(s): ${missing.join(', ')}")
+        }
+    }
+}
+
+build.dependsOn checkArtifactoryCredentials
